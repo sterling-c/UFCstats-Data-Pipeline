@@ -1,2 +1,2 @@
 # ufcstats.com-Data-Pipeline
-Data pipeline returns interesting calculated metrics of UFC fighters through scheduled scraping of the website ufcstats.com.
+Data pipeline returns Optional[int] = field(default=None)eresting calculated metrics of UFC fighters through scheduled scraping of the website ufcstats.com.
