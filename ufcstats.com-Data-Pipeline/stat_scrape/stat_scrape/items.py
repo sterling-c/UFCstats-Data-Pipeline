@@ -17,6 +17,7 @@ class Event(scrapy.Item):
     city: Optional[str] = field(default=None)
     state_province: Optional[str] = field(default=None)
     country: Optional[str] = field(default=None)
+    link: Optional[str] = field(default=None)
 
 
 @dataclass
@@ -77,6 +78,7 @@ class Fight(scrapy.Item):
     blue_reversal: Optional[int] = field(default=None)
     red_control: Optional[int] = field(default=None)
     blue_control: Optional[int] = field(default=None)
+    link: Optional[str] = field(default=None)
 
 
 @dataclass
@@ -104,3 +106,4 @@ class Fighter(scrapy.Item):
     takedown_acc: Optional[int] = field(default=None)
     takedown_def: Optional[int] = field(default=None)
     sub_avg: Optional[float] = field(default=None)
+    link: Optional[str] = field(default=None)
