@@ -5,7 +5,7 @@
 
 from scrapy import signals
 
-# useful for handling different item types with a single Optional[int] = field(default=None)erface
+# useful for handling different item types with a single interface
 from itemadapter import is_item, ItemAdapter
 
 
@@ -23,7 +23,7 @@ class StatScrapeSpiderMiddleware:
 
     def process_spider_input(self, response, spider):
         # Called for each response that goes through the spider
-        # middleware and Optional[int] = field(default=None)o the spider.
+        # middleware and into the spider.
 
         # Should return None or raise an exception.
         return None

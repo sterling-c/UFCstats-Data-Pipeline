@@ -4,7 +4,7 @@
 # See: https://docs.scrapy.org/en/latest/topics/item-pipeline.html
 
 
-# useful for handling different item types with a single Optional[int] = field(default=None)erface
+# useful for handling different item types with a single interface
 from itemadapter import ItemAdapter
 
 
