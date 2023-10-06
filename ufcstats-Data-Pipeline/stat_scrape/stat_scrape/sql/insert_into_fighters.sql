@@ -1,0 +1,28 @@
+INSERT INTO fighters 
+VALUES (
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s, 
+    %s
+)
