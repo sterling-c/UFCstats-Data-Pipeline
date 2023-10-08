@@ -39,11 +39,12 @@ class StatScrapePipeline:
             logging.error("Could not connect to database.")
             raise
 
+        # Create tables if they don't exist
         self.cursor.execute(open('stat_scrape/sql/create_events_table.sql', 'r').read())
         self.cursor.execute(open('stat_scrape/sql/create_fights_table.sql', 'r').read())
         self.cursor.execute(open('stat_scrape/sql/create_fighters_table.sql', 'r').read())
         
-    
+    # The items are inserted into the database based on their type
     def process_item(self, item, spider):
         if isinstance(item, Event):
             logging.debug("Inserting event into database...")
