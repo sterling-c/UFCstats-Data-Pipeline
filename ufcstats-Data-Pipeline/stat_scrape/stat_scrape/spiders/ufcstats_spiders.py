@@ -17,10 +17,10 @@ def convert_height(height):
     return int(clean_height[0]) * 12 + int(clean_height[1])
 
 # Converts time from a string to a time object
-def time_clean(time):
-    if re.search(r"^[0-5]?\d:[0-5]\d$", time):
+def time_clean(in_time):
+    if re.search(r"^[0-5]?\d:[0-5]\d$", in_time):
         return time(
-            minute=int(time.split(":")[0]), second=int(time.split(":")[1])
+            minute=int(in_time.split(":")[0]), second=int(in_time.split(":")[1])
         )
     else:
         return None
@@ -44,7 +44,7 @@ class UFCStatsSpider(Spider):
         source_date_format = "%B %d, %Y"
         execution_date_pattern = re.compile(r"([0-9]{4}), (0?[1-9]|[1][0-2]), (0?[1-9]|[12][0-9]|3[01]), (0?[0-9]|1[0-9]|2[0-3]), (0?[0-9]|[1-5][0-9]), (0?[0-9]|[1-5][0-9]), ([0-9]{1,6})", re.IGNORECASE)
         # Based on the schedule of events, only parse the events up to the last execution date of the pipeline.
-        last_execution_date = date(datetime.MINYEAR, 1, 1)
+        last_execution_date = date(1, 1, 1)
         if re.search(execution_date_pattern, open("/var/log/ufcstats.log").read()):
             last_execution_date =  [date(int(line[0]), int(line[1]), int(line[2])) 
                                     for line in re.findall(execution_date_pattern, open("/var/log/ufcstats.log").read())][-1]
@@ -133,7 +133,7 @@ class UFCStatsSpider(Spider):
             loser=loser,
             division=fight_division,
             time_format=fight_details[7],
-            ending_round=fight_details[3],
+            ending_round=int(fight_details[3]),
             ending_time=time_clean(fight_details[5]),
             method=fight_details[1],
             details=" ".join(fight_details[11:]),

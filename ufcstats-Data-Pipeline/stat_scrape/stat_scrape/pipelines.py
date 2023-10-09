@@ -20,7 +20,7 @@ class StatScrapePipeline:
             filename="/var/log/ufcstats.log",
             format="%(levelname)s: %(message)s",
             level=logging.DEBUG,
-            filemode='w'
+            filemode='a'
         )
 
         load_dotenv(dotenv_path=Path('.') / '.env')      
@@ -63,7 +63,7 @@ class StatScrapePipeline:
         elif isinstance(item, Fight):
             logging.debug("Inserting fight into database...")
             try:
-                self.cursor.execute(open('stat_scrape/sql/insert_into_fights.sql', 'r').read()
+                self.cursor.execute(open('stat_scrape/sql/insert_into_fights.sql', 'r').read(),
                                 (item.id,
                                  item.event_id,
                                  item.red_id,
@@ -127,38 +127,73 @@ class StatScrapePipeline:
                 raise
             
         elif isinstance(item, Fighter):
-            logging.debug("Inserting fighter into database...")
-            try:
-                self.cursor.execute(open('stat_scrape/sql/insert_into_fighters.sql', 'r').read()
-                                (item.id,
-                                 item.first_name,
-                                 item.last_name,
-                                 item.t_wins,
-                                 item.t_losses,
-                                 item.t_draws,
-                                 item.t_no_contests,
-                                 item.nickname,
-                                 item.ufc_wins,
-                                 item.ufc_losses,
-                                 item.ufc_draws,
-                                 item.ufc_no_contests,
-                                 item.height,
-                                 item.reach,
-                                 item.stance,
-                                 item.date_of_birth,
-                                 item.sig_strike_landed,
-                                 item.sig_strike_acc,
-                                 item.sig_strike_abs,
-                                 item.strike_def,
-                                 item.takedown_avg,
-                                 item.takedown_acc,
-                                 item.takedown_def,
-                                 item.sub_avg,
-                                 item.link))
-                logging.debug("Inserted fighter into database.")
-            except Exception as e:
-                logging.error(f"Could not insert fighter into database: {e}")
-                raise
+            if len(self.cursor.execute(open('stat_scrape/sql/select_fighters.sql', 'r').read(), (item.id,)).fetchall()) != 0:
+                logging.debug("Fighter already in database. Updating...")
+                try:
+                    self.cursor.execute(open('stat_scrape/sql/update_fighters.sql', 'r').read(), 
+                                        (item.first_name,
+                                        item.last_name,
+                                        item.t_wins,
+                                        item.t_losses,
+                                        item.t_draws,
+                                        item.t_no_contests,
+                                        item.nickname,
+                                        item.ufc_wins,
+                                        item.ufc_losses,
+                                        item.ufc_draws,
+                                        item.ufc_no_contests,
+                                        item.height,
+                                        item.reach,
+                                        item.stance,
+                                        item.date_of_birth,
+                                        item.sig_strike_landed,
+                                        item.sig_strike_acc,
+                                        item.sig_strike_abs,
+                                        item.strike_def,
+                                        item.takedown_avg,
+                                        item.takedown_acc,
+                                        item.takedown_def,
+                                        item.sub_avg,
+                                        item.link,
+                                        item.id))
+                    logging.debug("Updated fighter in database.")
+                except Exception as e:
+                    logging.error(f"Could not update fighter in database: {e}")
+                    raise  
+            
+            else:
+                logging.debug("Inserting fighter into database...")
+                try:
+                    self.cursor.execute(open('stat_scrape/sql/insert_into_fighters.sql', 'r').read(),
+                                    (item.id,
+                                    item.first_name,
+                                    item.last_name,
+                                    item.t_wins,
+                                    item.t_losses,
+                                    item.t_draws,
+                                    item.t_no_contests,
+                                    item.nickname,
+                                    item.ufc_wins,
+                                    item.ufc_losses,
+                                    item.ufc_draws,
+                                    item.ufc_no_contests,
+                                    item.height,
+                                    item.reach,
+                                    item.stance,
+                                    item.date_of_birth,
+                                    item.sig_strike_landed,
+                                    item.sig_strike_acc,
+                                    item.sig_strike_abs,
+                                    item.strike_def,
+                                    item.takedown_avg,
+                                    item.takedown_acc,
+                                    item.takedown_def,
+                                    item.sub_avg,
+                                    item.link))
+                    logging.debug("Inserted fighter into database.")
+                except Exception as e:
+                    logging.error(f"Could not insert fighter into database: {e}")
+                    raise
         
         self.connection.commit()
         return item
