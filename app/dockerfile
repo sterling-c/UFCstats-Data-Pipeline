@@ -1,0 +1,9 @@
+FROM python:3.10-bookworm
+RUN apt-get update -q 
+RUN apt-get install -y cron
+COPY . .
+RUN pip3 install -r requirements.txt
+COPY shell_scripts/cron /etc/cron.d/cron
+RUN chmod 0644 /etc/cron.d/cron
+RUN crontab /etc/cron.d/cron
+CMD ["cron", "-f"]
