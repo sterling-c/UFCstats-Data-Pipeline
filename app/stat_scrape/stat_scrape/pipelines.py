@@ -157,8 +157,7 @@ class StatScrapePipeline:
                 logging.debug("Inserting fighter into database...")
                 try:
                     self.cursor.execute(open('stat_scrape/sql/insert_into_fighters.sql', 'r').read(),
-                                    (item.id,
-                                    item.first_name,
+                                    (item.first_name,
                                     item.last_name,
                                     item.t_wins,
                                     item.t_losses,
@@ -172,7 +171,6 @@ class StatScrapePipeline:
                                     item.height,
                                     item.reach,
                                     item.stance,
-                                    item.date_of_birth,
                                     item.sig_strike_landed,
                                     item.sig_strike_acc,
                                     item.sig_strike_abs,
@@ -181,7 +179,7 @@ class StatScrapePipeline:
                                     item.takedown_acc,
                                     item.takedown_def,
                                     item.sub_avg,
-                                    item.link))
+                                    item.id))
                     logging.debug("Inserted fighter into database.")
                 except Exception as e:
                     logging.error(f"Could not insert fighter into database: {e}")
@@ -195,7 +193,7 @@ class StatScrapePipeline:
         # If the database is empty, the last event date is set to 1/1/1 so the entire site is scraped.
         spider.last_event_date = date(1, 1, 1)
         logging.debug("Getting last event date from database...")
-        if len(self.cursor.execute("SELECT ;").fetchall()) != 0:
+        if len(self.cursor.execute("SELECT * from events;").fetchall()) != 0:
             spider.last_event_date = self.cursor.execute("SELECT MAX(date) FROM events;").fetchone()[0]
         logging.debug(f"Last event date: {spider.last_event_date}")
 

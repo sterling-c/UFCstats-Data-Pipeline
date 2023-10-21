@@ -1,4 +1,4 @@
-FROM postgres:16.0
+FROM postgres:15.0
 USER postgres
 ARG POSTGRES_USER
 ARG POSTGRES_PASSWORD
@@ -6,7 +6,7 @@ ARG POSTGRES_DB
 ENV POSTGRES_USER=$POSTGRES_USER
 ENV POSTGRES_PASSWORD=$POSTGRES_PASSWORD
 ENV POSTGRES_DB=$POSTGRES_DB
-RUN pg_createcluster 16 main && \
+RUN pg_createcluster 15 main && \
     /etc/init.d/postgresql start && \
     psql --command "CREATE ROLE $POSTGRES_USER WITH SUPERUSER PASSWORD '$POSTGRES_PASSWORD';" && \
     createdb -O $POSTGRES_USER $POSTGRES_DB
