@@ -137,7 +137,6 @@ class StatScrapePipeline:
                                         item.height,
                                         item.reach,
                                         item.stance,
-                                        item.date_of_birth,
                                         item.sig_strike_landed,
                                         item.sig_strike_acc,
                                         item.sig_strike_abs,
@@ -146,7 +145,6 @@ class StatScrapePipeline:
                                         item.takedown_acc,
                                         item.takedown_def,
                                         item.sub_avg,
-                                        item.link,
                                         item.id))
                     logging.debug("Updated fighter in database.")
                 except Exception as e:
@@ -157,7 +155,8 @@ class StatScrapePipeline:
                 logging.debug("Inserting fighter into database...")
                 try:
                     self.cursor.execute(open('stat_scrape/sql/insert_into_fighters.sql', 'r').read(),
-                                    (item.first_name,
+                                    (item.id,
+                                    item.first_name,
                                     item.last_name,
                                     item.t_wins,
                                     item.t_losses,
@@ -171,6 +170,7 @@ class StatScrapePipeline:
                                     item.height,
                                     item.reach,
                                     item.stance,
+                                    item.date_of_birth,
                                     item.sig_strike_landed,
                                     item.sig_strike_acc,
                                     item.sig_strike_abs,
@@ -179,7 +179,7 @@ class StatScrapePipeline:
                                     item.takedown_acc,
                                     item.takedown_def,
                                     item.sub_avg,
-                                    item.id))
+                                    item.link))
                     logging.debug("Inserted fighter into database.")
                 except Exception as e:
                     logging.error(f"Could not insert fighter into database: {e}")
@@ -198,7 +198,8 @@ class StatScrapePipeline:
         logging.debug(f"Last event date: {spider.last_event_date}")
 
     def close_spider(self, spider):
-        self.connection.close()
         self.cursor.close()
+        self.connection.close()
+        
 
     

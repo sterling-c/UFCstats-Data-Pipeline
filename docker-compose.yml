@@ -11,7 +11,10 @@ services:
       - POSTGRES_DB=${POSTGRES_DB}
       - POSTGRES_HOST=${POSTGRES_HOST}
       - POSTGRES_PORT=${POSTGRES_PORT}
+      - MAILTO=${MAILTO}
     depends_on:
+      - db
+    links:
       - db
 
   db:
@@ -26,8 +29,8 @@ services:
     ports:
       - "${POSTGRES_PORT}:${POSTGRES_PORT}"
 
-  pgadmin:
-    container_name: ufcstat_pgadmin
+  admin:
+    container_name: ufcstat_admin
     image: dpage/pgadmin4
     environment:
       - PGADMIN_DEFAULT_EMAIL=${PGADMIN_DEFAULT_EMAIL}
@@ -37,8 +40,8 @@ services:
     depends_on:
       - db
 
-  grafana:
-    container_name: ufcstat_grafana
+  visualizer:
+    container_name: ufcstat_visualizer
     image: grafana/grafana
     ports:
       - "3000:3000"

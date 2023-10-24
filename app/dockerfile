@@ -3,7 +3,8 @@ RUN apt-get update -q
 RUN apt-get install -y cron
 COPY . .
 RUN pip3 install -r requirements.txt
-COPY shell_scripts/cron /etc/cron.d/cron
-RUN chmod 0644 /etc/cron.d/cron
-RUN crontab /etc/cron.d/cron
-CMD ["cron", "-f"]
+COPY shell_scripts/scrape_cron /etc/cron.d/scrape_cron
+RUN chmod 0744 /etc/cron.d/scrape_cron
+RUN crontab /etc/cron.d/scrape_cron 
+RUN touch /var/log/cron.log
+CMD cron && tail -f /var/log/cron.log

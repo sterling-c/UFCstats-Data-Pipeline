@@ -1,0 +1,1 @@
+30 5 * * 0 sh /shell_scripts/stat_scrape.sh 
