@@ -13,3 +13,12 @@ ON f.red_id = fr1.id
 INNER JOIN fighters fr2 
 ON f.blue_id = fr2.id
 GROUP BY stance_matchup
+
+-- For Stance Dashboard
+-- Visualization: Pie Chart
+-- Show: Calculated
+-- Piechart Type: Pie
+-- Legend Visibility: On
+-- Legend Position: Right
+-- Legend Mode: Table
+-- Color Palette: Classic

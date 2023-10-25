@@ -21,3 +21,12 @@ WHERE (CASE
 	   WHEN (fr1.stance = 'Switch' AND fr2.stance = 'Southpaw') OR (fr1.stance = 'Southpaw' AND fr2.stance = 'Switch') THEN 'Southpaw vs Switch' 
 		END) IS NOT NULL
 GROUP BY stance_matchup
+
+-- For Stance Dashboard
+-- Visualization: Pie Chart
+-- Show: Calculated
+-- Piechart Type: Pie
+-- Legend Visibility: On
+-- Legend Position: Right
+-- Legend Mode: Table
+-- Color Palette: Classic

@@ -5,3 +5,6 @@ ON  e.id = f.event_id
 GROUP BY e.name, e.date
 ORDER BY total_bonuses desc
 LIMIT 5
+
+-- For Bonus Dashboard
+-- Visualization: Table

@@ -1,0 +1,12 @@
+SELECT fr.first_name, fr.last_name, e.name, e.date, f.details
+FROM fights as f
+JOIN events as e
+ON e.id = f.event_id
+JOIN fighters as fr
+ON fr.id = f.winner_id
+WHERE f.perf_bonus = True
+AND f.method LIKE '%Decision%'
+ORDER BY e.date
+
+-- For Bonus Dashboard
+-- Visualization: Table

@@ -21,3 +21,12 @@ WHERE (CASE
 	   WHEN (fr1.stance = 'Orthodox' AND fr2.stance = 'Switch') OR (fr1.stance = 'Switch' AND fr2.stance = 'Orthodox') THEN 'Orthodox vs Switch' 
 		END) IS NOT NULL
 GROUP BY stance_matchup
+
+-- For Stance Dashboard
+-- Visualization: Pie Chart
+-- Show: Calculated
+-- Piechart Type: Pie
+-- Legend Visibility: On
+-- Legend Position: Right
+-- Legend Mode: Table
+-- Color Palette: Classic

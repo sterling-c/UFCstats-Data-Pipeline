@@ -1,11 +1,11 @@
-SELECT stance, COUNT(*)
-FROM fighters 
-GROUP BY stance
-HAVING stance IS NOT NULL
+SELECT method, COUNT(*)
+FROM fights
+WHERE perf_bonus = True
+GROUP BY method
 
 -- For Stance Dashboard
 -- Visualization: Pie Chart
--- Show: All Values
+-- Show: Calculated
 -- Piechart Type: Pie
 -- Legend Visibility: On
 -- Legend Position: Right

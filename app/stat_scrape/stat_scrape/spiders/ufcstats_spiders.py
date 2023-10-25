@@ -90,7 +90,7 @@ class UFCStatsSpider(Spider):
             if re.search("W", "".join(fighter.xpath("i//text()").get().split())):
                 winner = (
                     fighter.xpath(
-                        '//*[@class="b-fight-details__person-text"]/h3/a/@href'
+                        '*[@class="b-fight-details__person-text"]/h3/a/@href'
                     )
                     .get()
                     .split('/')[-1]
@@ -98,7 +98,7 @@ class UFCStatsSpider(Spider):
             elif re.search("L", "".join(fighter.xpath("i//text()").get().split())):
                 loser = (
                     fighter.xpath(
-                        '//*[@class="b-fight-details__person-text"]/h3/a/@href'
+                        '*[@class="b-fight-details__person-text"]/h3/a/@href'
                     )
                     .get()
                     .split('/')[-1]
