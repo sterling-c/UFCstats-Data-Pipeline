@@ -9,7 +9,7 @@ import os
 class StatScrapePipeline:
     def __init__(self):
         logging.basicConfig(
-            format="%(levelname)s: %(message)s",
+            format="%(asctime)s %(levelname)s: %(message)s",
             level=logging.DEBUG,
         )
         # Database connection is established at the initialization of the pipeline
@@ -47,7 +47,7 @@ class StatScrapePipeline:
                                  item.date, 
                                  item.location,  
                                  item.link))
-                logging.debug("Inserted event into database.")
+                logging.info("Inserted event into database.")
             except Exception as e:
                 logging.error(f"Could not insert event into database: {e}")
                 raise
@@ -113,7 +113,7 @@ class StatScrapePipeline:
                                  item.red_ground_attempt,
                                  item.blue_ground_attempt,
                                  item.link))
-                logging.debug("Inserted fight into database.")
+                logging.info("Inserted fight into database.")
             except Exception as e:
                 logging.error(f"Could not insert fight into database: {e}")
                 raise
@@ -146,7 +146,7 @@ class StatScrapePipeline:
                                         item.takedown_def,
                                         item.sub_avg,
                                         item.id))
-                    logging.debug("Updated fighter in database.")
+                    logging.info("Updated fighter in database.")
                 except Exception as e:
                     logging.error(f"Could not update fighter in database: {e}")
                     raise  
@@ -180,7 +180,7 @@ class StatScrapePipeline:
                                     item.takedown_def,
                                     item.sub_avg,
                                     item.link))
-                    logging.debug("Inserted fighter into database.")
+                    logging.info("Inserted fighter into database.")
                 except Exception as e:
                     logging.error(f"Could not insert fighter into database: {e}")
                     raise
@@ -195,7 +195,7 @@ class StatScrapePipeline:
         logging.debug("Getting last event date from database...")
         if len(self.cursor.execute("SELECT * from events;").fetchall()) != 0:
             spider.last_event_date = self.cursor.execute("SELECT MAX(date) FROM events;").fetchone()[0]
-        logging.debug(f"Last event date: {spider.last_event_date}")
+        logging.info(f"Last event date: {spider.last_event_date}")
 
     def close_spider(self, spider):
         self.cursor.close()
