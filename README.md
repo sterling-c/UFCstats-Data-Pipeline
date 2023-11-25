@@ -15,13 +15,17 @@ Create the following environment variables (creating an environment file at the 
 3. POSTGRES_PASSWORD = The password of the created user
 4. POSTGRES_HOST = This should always be set to 'db' as the virtual network docker creates makes all services recognizable to each other by their service name. DO NOT use 'localhost'.
 5. POSTGRES_PORT = The port that the Postgres database will be listening from and the Scrapy project will connect to for the database connection.
-6. PGADMIN_DEFAULT_EMAIL = The email used to log in to PGadmin
-7. PGADMIN_DEFAULT_PASSWORD = The password used to login to PGadmin
+6. MAILTO: For cron logs
+7. PGADMIN_DEFAULT_EMAIL = The email used to log in to PGadmin
+8. PGADMIN_DEFAULT_PASSWORD = The password used to login to PGadmin
 
 From the root of the project directory, enter from the command line:
 ```
 docker-compose up
 ```
+
+To connect to the server through pgAdmin, open pgAdmin in a browser through its given port and log in with the pgAdmin credentials. Then add the server using all of the variables given for the creation of the database, including the hostname.
+Same information needed for adding database as a data source for Gafana, but disable SSL/TSL.
 
 ## USAGE
 
@@ -30,4 +34,4 @@ This pipeline is configured through crontab to execute the pipeline every week o
 cd $PATH/TO/stat_scrape
 scrapy crawl ufcstatspider
 ```
-To connect to the server through pgAdmin, open pgAdmin in a browser through its given port and log in with the pgAdmin credentials. Then add the server using all of the variables given for the creation of the database, including the hostname.
+For more information on how the program works: https://sterlingmaxclark.com/ufc-stats-data-pipeline/
