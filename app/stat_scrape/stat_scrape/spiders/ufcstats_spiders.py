@@ -28,10 +28,6 @@ def time_clean(in_time):
 class UFCStatsSpider(Spider):
     name = "ufcstatspider"
     start_urls = ["http://ufcstats.com/statistics/events/completed?page=all"]
-    logging.basicConfig(
-        format="%(levelname)s: %(message)s",
-        level=logging.WARNING,
-    )
 
     def parse(self, response):
         source_date_format = "%B %d, %Y"
