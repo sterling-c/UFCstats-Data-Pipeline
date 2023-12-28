@@ -2,6 +2,16 @@ FROM python:3.10-bookworm
 RUN apt-get update -q 
 RUN apt-get install -y cron
 COPY . .
+ARG POSTGRES_USER
+ARG POSTGRES_PASSWORD
+ARG POSTGRES_DB
+ARG POSTGRES_HOST
+ARG POSTGRES_PORT
+RUN sed -i "s/\$POSTGRES_USER/${POSTGRES_USER}/g" shell_scripts/stat_scrape.sh
+RUN sed -i "s/\$POSTGRES_PASSWORD/${POSTGRES_PASSWORD}/g" shell_scripts/stat_scrape.sh
+RUN sed -i "s/\$POSTGRES_DB/${POSTGRES_DB}/g" shell_scripts/stat_scrape.sh
+RUN sed -i "s/\$POSTGRES_HOST/${POSTGRES_HOST}/g" shell_scripts/stat_scrape.sh
+RUN sed -i "s/\$POSTGRES_PORT/${POSTGRES_PORT}/g" shell_scripts/stat_scrape.sh
 RUN pip3 install -r requirements.txt
 COPY shell_scripts/scrape_cron /etc/cron.d/scrape_cron
 RUN chmod 0744 /etc/cron.d/scrape_cron

@@ -76,6 +76,7 @@ class StatScrapePipeline:
             spider.last_event_date = self.cursor.fetchone()[0]
         logging.debug(f"Last event date: {spider.last_event_date}")
 
+
     def close_spider(self, spider):
         logging.debug("Inserting events into database...")
         try:

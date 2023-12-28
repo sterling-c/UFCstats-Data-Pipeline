@@ -10,11 +10,9 @@ from dotenv import load_dotenv
 def clean_text(response, path):
     return [data.strip() for data in response.xpath(path).getall() if data.strip()]
 
-
 def convert_height(height):
     clean_height = height.translate({ord(i): None for i in ["'", '"']}).split()
     return int(clean_height[0]) * 12 + int(clean_height[1])
-
 
 def time_clean(in_time):
     if re.search(r"^[0-5]?\d:[0-5]\d$", in_time):
@@ -29,9 +27,10 @@ class UFCStatsSpider(Spider):
     name = "ufcstatspider"
     start_urls = ["http://ufcstats.com/statistics/events/completed?page=all"]
 
+
     def parse(self, response):
         source_date_format = "%B %d, %Y"
-        logging.debug(f"Parsing events starting from {self.last_event_date}")
+        logging.debug(f"Parsing events starting from {self.last_event_date}...")
         for row in response.xpath(
             '//*[@class="b-statistics__table-events"]//tbody//tr'
         )[2:]:
@@ -46,7 +45,7 @@ class UFCStatsSpider(Spider):
                 link=content[2],
             )
             if event.date.date() <= self.last_event_date:
-                logging.debug("Reached last event.")
+                logging.info("Reached last event.")
                 break
 
             yield event
@@ -60,7 +59,8 @@ class UFCStatsSpider(Spider):
             yield Request(fight_link, callback=self.parse_fight, dont_filter=False)
 
     def parse_fight(self, response):
-        event_link = response.xpath('//*[@class="b-content__title"]//a/@href').get()
+        event_link = response.xpath(
+            '//*[@class="b-content__title"]//a/@href').get()
         fighter_links = response.xpath(
             '//*[@class="b-fight-details__person"]//a/@href'
         ).getall()
@@ -76,6 +76,7 @@ class UFCStatsSpider(Spider):
             if re.search("W", "".join(fighter.xpath("i//text()").get().split())):
                 winner = (
                     fighter.xpath('*[@class="b-fight-details__person-text"]/h3/a/@href')
+
                     .get()
                     .split("/")[-1]
                 )
@@ -94,7 +95,8 @@ class UFCStatsSpider(Spider):
         fight_details = clean_text(
             response, '//*[@class="b-fight-details__content"]//text()'
         )
-        fight_stats = response.xpath('//*[@class="b-fight-details__table-body"]/tr')
+        fight_stats = response.xpath(
+            '//*[@class="b-fight-details__table-body"]/tr')
         total_stats = clean_text(fight_stats[0], ("td//text()"))
         significant_stats = clean_text(
             fight_stats[int(len(fight_stats) / 2)], ("td//text()")
@@ -187,7 +189,8 @@ class UFCStatsSpider(Spider):
             t_no_contests = int(record[3])
 
         nickname = " ".join(
-            response.xpath('//*[@class="b-content__Nickname"]//text()').get().split()
+            response.xpath(
+                '//*[@class="b-content__Nickname"]//text()').get().split()
         )
 
         basic_info = clean_text(
@@ -219,7 +222,6 @@ class UFCStatsSpider(Spider):
         )
 
         ufc_results = clean_text(response, '//*[@class="b-flag__text"]//text()')
-
         fighter = Fighter(
             id=response.url.split("/")[-1],
             first_name=first_name,
