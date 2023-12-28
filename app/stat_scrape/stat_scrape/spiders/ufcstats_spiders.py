@@ -1,29 +1,18 @@
 import logging
 import re
 
-
 from scrapy import Spider, Request
 from datetime import datetime, time, date, timedelta
 from stat_scrape.items import Event, Fight, Fighter
 from dotenv import load_dotenv
 
 
-# Cleans text by removing whitespace and empty strings,
-# returning a list of all the text within the given property.
 def clean_text(response, path):
     return [data.strip() for data in response.xpath(path).getall() if data.strip()]
-
-
-# Converts height from feet and inches to inches
-
 
 def convert_height(height):
     clean_height = height.translate({ord(i): None for i in ["'", '"']}).split()
     return int(clean_height[0]) * 12 + int(clean_height[1])
-
-
-# Converts time from a string to a time object
-
 
 def time_clean(in_time):
     if re.search(r"^[0-5]?\d:[0-5]\d$", in_time):
@@ -34,19 +23,10 @@ def time_clean(in_time):
         return None
 
 
-# Spider for scraping UFCStats.com.
-# Creates Event, Fight, and Fighter objects representing the data scraped in that order.
-
-
 class UFCStatsSpider(Spider):
     name = "ufcstatspider"
     start_urls = ["http://ufcstats.com/statistics/events/completed?page=all"]
-    logging.basicConfig(
-        format="%(asctime)s %(levelname)s: %(message)s",
-        level=logging.DEBUG,
-    )
-    # The first parse is for the events page.
-    # Creates the event objects and passes on the links for the individual event pages for the next parse.
+
 
     def parse(self, response):
         source_date_format = "%B %d, %Y"
@@ -61,8 +41,7 @@ class UFCStatsSpider(Spider):
                 date=datetime.strptime(
                     " ".join(content[5].split()), source_date_format
                 ),
-                location=" ".join(
-                    row.xpath("td[2]//text()").getall()[0].split()),
+                location=" ".join(row.xpath("td[2]//text()").getall()[0].split()),
                 link=content[2],
             )
             if event.date.date() <= self.last_event_date:
@@ -72,9 +51,6 @@ class UFCStatsSpider(Spider):
             yield event
             yield Request(event.link, callback=self.parse_event, dont_filter=False)
 
-    # The second parse is for the individual event pages.
-    # Collects the links for the individual fight pages for the next parse.
-
     def parse_event(self, response):
         for row in response.xpath(
             '//*[@class="b-fight-details__table b-fight-details__table_style_margin-top b-fight-details__table_type_event-details js-fight-table"]//tbody//tr'
@@ -82,43 +58,37 @@ class UFCStatsSpider(Spider):
             fight_link = row.xpath("td//a/@href").getall()[0]
             yield Request(fight_link, callback=self.parse_fight, dont_filter=False)
 
-    # The third parse is for the individual fight pages.
-    # Creates the fight objects and passes on the links for the individual fighter pages for the next parse.
     def parse_fight(self, response):
         event_link = response.xpath(
             '//*[@class="b-content__title"]//a/@href').get()
         fighter_links = response.xpath(
             '//*[@class="b-fight-details__person"]//a/@href'
         ).getall()
-        # The fight has three images indicating if it was a title fight, performance of the night, and/or fight of the night.
         special_marks = response.xpath(
             '//*[@class="b-fight-details__fight-head"]//img/@src'
         ).getall()
-        # The winner and loser are indicated by a "W" or "L" in the fight details.
-        # In the case of a draw or a no contest, the winner and loser are both None.
         winner = None
         loser = None
+
         for fighter in response.xpath(
             '//*[@class="b-fight-details__persons clearfix"]/div'
         ):
             if re.search("W", "".join(fighter.xpath("i//text()").get().split())):
                 winner = (
-                    fighter.xpath(
-                        '*[@class="b-fight-details__person-text"]/h3/a/@href')
+                    fighter.xpath('*[@class="b-fight-details__person-text"]/h3/a/@href')
+
                     .get()
                     .split("/")[-1]
                 )
             elif re.search("L", "".join(fighter.xpath("i//text()").get().split())):
                 loser = (
-                    fighter.xpath(
-                        '*[@class="b-fight-details__person-text"]/h3/a/@href')
+                    fighter.xpath('*[@class="b-fight-details__person-text"]/h3/a/@href')
                     .get()
                     .split("/")[-1]
                 )
 
         fight_division = " ".join(
-            response.xpath(
-                'normalize-space(//*[@class="b-fight-details__fight-head"])')
+            response.xpath('normalize-space(//*[@class="b-fight-details__fight-head"])')
             .get()
             .split()[:-1]
         )
@@ -131,8 +101,6 @@ class UFCStatsSpider(Spider):
         significant_stats = clean_text(
             fight_stats[int(len(fight_stats) / 2)], ("td//text()")
         )
-        # The fight stats are seperated into two tables, one for total strikes and one for significant strikes.
-        # They are also seperated into two tables for each fighter, one for the red corner and one for blue corner.
         fight = Fight(
             id=response.url.split("/")[-1],
             event_id=event_link.split("/")[-1],
@@ -196,17 +164,16 @@ class UFCStatsSpider(Spider):
             link=response.url,
         )
         yield fight
+
         for fighter in fighter_links:
             yield Request(fighter, callback=self.parse_fighter, dont_filter=False)
 
-    # The final parse is for the individual fighter pages.
     def parse_fighter(self, response):
         date_format = "%b %d, %Y"
-
         header = clean_text(response, '//*[@class="b-content__title"]//text()')
-        # Name is extracted this way for either a single name or a name with more than the first and last name.
         first_name = None
         last_name = None
+
         if len(header[0].split()) < 2:
             first_name = header[0]
         else:
@@ -217,6 +184,7 @@ class UFCStatsSpider(Spider):
         t_losses = int(record[1])
         t_draws = int(record[2])
         t_no_contests = 0
+
         if len(record) > 3:
             t_no_contests = int(record[3])
 
@@ -229,17 +197,20 @@ class UFCStatsSpider(Spider):
             response,
             '//*[@class="b-list__info-box b-list__info-box_style_small-width js-guide"]//text()',
         )
-        # The height, reach, stance, and date of birth are not always present.
         height = None
         reach = None
         stance = None
         date_of_birth = None
+
         if basic_info[1] != "--":
             height = convert_height(basic_info[1])
+
         if basic_info[5] != "--":
             reach = int(basic_info[5].replace('"', ""))
+
         if basic_info[7] in ["Orthodox", "Southpaw", "Switch"]:
             stance = basic_info[7]
+
         if basic_info[-1] != "--":
             date_of_birth = datetime.strptime(
                 " ".join(basic_info[-1].split()), date_format
@@ -250,10 +221,7 @@ class UFCStatsSpider(Spider):
             '//*[@class="b-list__info-box b-list__info-box_style_middle-width js-guide clearfix"]//text()',
         )
 
-        # This extracts all of the results from the fighter's fights under the UFC banner or past promotions that were bought by the UFC.
-        ufc_results = clean_text(
-            response, '//*[@class="b-flag__text"]//text()')
-
+        ufc_results = clean_text(response, '//*[@class="b-flag__text"]//text()')
         fighter = Fighter(
             id=response.url.split("/")[-1],
             first_name=first_name,
@@ -281,5 +249,4 @@ class UFCStatsSpider(Spider):
             sub_avg=float(career_stats[16]),
             link=response.url,
         )
-
         yield fighter
