@@ -1,9 +1,9 @@
 version: '3.8'
 services:
-  app:
-    container_name: ufcstat_app
+  scraper:
+    container_name: ufcstat_scraper
     build:
-      context: ./app
+      context: ./scraper
       dockerfile: dockerfile
       args:
         - POSTGRES_USER=${POSTGRES_USER}

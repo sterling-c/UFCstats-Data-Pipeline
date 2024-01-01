@@ -18,3 +18,8 @@ RUN chmod 0744 /etc/cron.d/scrape_cron
 RUN crontab /etc/cron.d/scrape_cron 
 RUN touch /var/log/cron.log
 CMD cron && tail -f /var/log/cron.log
+ARG POSTGRES_USER
+ARG POSTGRES_PASSWORD
+ARG POSTGRES_DB
+ARG POSTGRES_HOST
+ARG POSTGRES_PORT
